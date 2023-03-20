@@ -10,17 +10,17 @@ const Token = require('../providers/Validate_Token');
 //passer par la validation du token 
 // Token.validateToken,
 
-router.post('/createPerso', PersoController.newPerso);
+router.post('/createPerso', Token.validateToken,PersoController.newPerso);
 
-router.put('/updatePerso/:id', PersoController.updatePerso);
+router.put('/updatePerso/:id', Token.validateToken,PersoController.updatePerso);
 
-router.get('/afficheLesPersos', PersoController.ToutLesPersos);
+router.get('/afficheLesPersos', Token.validateToken, PersoController.ToutLesPersos);
 
-router.get('/afficheLesPersosParAnime/:id_anime',  PersoController.get_perso_by_anime_id);
+router.get('/afficheLesPersosParAnime/:id_anime', Token.validateToken, PersoController.get_perso_by_anime_id);
 
-router.delete('/deletePerso/:id', PersoController.deletePerso);
+router.delete('/deletePerso/:id', Token.validateToken, PersoController.deletePerso);
 
-router.get('/GetOne/:id', PersoController.GetOnePerso);
+router.get('/GetOne/:id', Token.validateToken, PersoController.GetOnePerso);
 
 
 module.exports = router;
