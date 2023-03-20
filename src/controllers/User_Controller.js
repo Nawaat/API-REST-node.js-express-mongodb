@@ -27,7 +27,6 @@ exports.signUp = (req, res) => {
     User.find({ email: email }).then(user => {
 
         //On verifie si la longueur du tableau est superieur a 0
-
         if (user.length > 0) {
             res.status(503).json({ message: "L'email est déja existant" });
         } else {
@@ -53,39 +52,28 @@ exports.signUp = (req, res) => {
     })
 }
 
-
 /**
  * On stock dans nos constantes les attribut email, password du body 
  */
 exports.signIn = (req, res) => {
-
     const email = req.body.email;
     const password = req.body.password;
-
     //On utilise la methode findOne qui recupere un objet a partir de l'email entreer
-
     User.findOne({ email: email }).then(user => {
-
-
         //Compare de manière asynchrone le password donné avec le password hashé.              
-
         bcrypt.compare(password, user.password).then(isEqual => {
-
             /**
              * En cas de retour positif si la condition est vrai, on etabli un token grace a la fonction 
              * sign de jsonwebtoken qui prend en parametre 
             */
-
             if (isEqual) {
                 const token = jwt.sign({
                     email: user.email,
                     userId: user._id.toString()
                 },
-
                     //On pointe vers la variable env secret token qui va servir de signature
                     process.env.JWT_SECRET_TOKEN,
                     {
-
                         // 3eme param delai d'expriration
                         expiresIn: '5h'
                     });
@@ -94,10 +82,8 @@ exports.signIn = (req, res) => {
                 const update = { token_valid: token }
 
                 User.findByIdAndUpdate(id, update, function (err, res) {
-
                     if (err) {
                         console.log(err)
-
                     } else {
                         console.log(res)
                     }
@@ -105,14 +91,11 @@ exports.signIn = (req, res) => {
                 //On renvoie un objet contenant le token creer et le user Email
                 res.status(200).json({ token: token, userEmail: user.email })
             } else {
-
                 //Sinon on envoie un message precisant que le mdp est incorrecte
                 res.status(503).json({ message: "Le mot de passe est incorrecte" })
             }
-
             // On cas de retour negatif de la methode compare() on renvoie un msg d'erreur
         }).catch(err => res.status(400).json({ message: "Une erreur c'est produite", err: err }));
-
         //En cas de retour negatif de findOne on envoie le message 
     }).catch(err => {
         res.status(503).json({ message: "L'email n'existe pas" });
